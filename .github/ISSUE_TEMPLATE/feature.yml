@@ -1,0 +1,45 @@
+﻿name:  기능 요청 (Feature Request)
+description: 또또마켓에 추가하고 싶은 새로운 기능에 대한 아이디어를 제안합니다.
+title: "[Feature]: "
+labels: ["feature"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 기능 요청 (Feature Request)
+        새로운 기능 아이디어를 제안해 주셔서 감사합니다!
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 어떤 기능인가요? (Description)
+      description: 추가하고 싶은 기능에 대해 설명해 주세요.
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: 왜 이 기능이 필요한가요? (Motivation)
+      description: 이 기능이 필요한 이유와 해결하고자 하는 문제에 대해 설명해 주세요.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 완료 조건 (Acceptance Criteria)
+      description: 이 기능이 구현되었다고 판단할 수 있는 조건을 작성해 주세요.
+      placeholder: |
+        - [ ] 사용자가 새 기능을 사용할 수 있다
+        - [ ] 기능이 모바일에서도 작동한다
+    validations:
+      required: false
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 대안 (Alternatives)
+      description: 고려한 다른 대안이 있다면 설명해 주세요.
+    validations:
+      required: false

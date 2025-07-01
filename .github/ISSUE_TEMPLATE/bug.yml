@@ -1,0 +1,61 @@
+﻿name:  버그 신고 (Bug Report)
+description: 또또마켓에서 발생한 버그를 신고합니다.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 버그 신고 (Bug Report)
+        버그를 신고해 주셔서 감사합니다! 아래 정보를 작성해 주세요.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 버그 설명 (Bug Description)
+      description: 발생한 버그에 대해 간략히 설명해 주세요.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: 재현 방법 (Steps to Reproduce)
+      description: 버그를 재현하는 단계를 설명해 주세요.
+      placeholder: |
+        1. "..." 페이지로 이동
+        2. "..." 버튼 클릭
+        3. 오류 발생
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 예상 결과 (Expected Behavior)
+      description: 원래 어떻게 작동해야 하는지 설명해 주세요.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: browsers
+    attributes:
+      label: 브라우저 (Browser)
+      description: 버그가 발생한 브라우저를 선택해 주세요.
+      multiple: true
+      options:
+        - Chrome
+        - Firefox
+        - Safari
+        - Edge
+        - 기타 (Other)
+    validations:
+      required: false
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: 스크린샷 (Screenshots)
+      description: 가능하다면 버그를 보여주는 스크린샷을 첨부해 주세요.
+    validations:
+      required: false
