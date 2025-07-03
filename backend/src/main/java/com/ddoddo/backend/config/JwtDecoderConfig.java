@@ -15,7 +15,6 @@ public class JwtDecoderConfig {
 
     @Bean
     public JwtDecoder jwtDecoder() {
-        // String secret = "YOUR_SUPABASE_JWT_SECRET"; // Supabase 대시보드 > Settings > API에서 확인
         byte[] secretBytes = secret.getBytes();
         SecretKeySpec secretKey = new SecretKeySpec(secretBytes, "HmacSHA256");
         return NimbusJwtDecoder.withSecretKey(secretKey).build();
