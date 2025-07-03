@@ -8,6 +8,8 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -20,8 +22,16 @@ public class AuthService {
         User user = userRepository.findByUid(uid)
                 .orElseGet(() -> {
                     String email = jwt.getClaimAsString("email");
-                    String picture = jwt.getClaimAsString("picture"); // 구글 프로필 이미지 URL
-
+                    Map<String, Object> userMetadata = jwt.getClaimAsMap("user_metadata");
+                    String picture = null;
+                    if (userMetadata != null) {
+                        // user_metadata에서 'picture' 또는 'avatar_url' 클레임을 찾습니다.
+                        if (userMetadata.containsKey("picture")) {
+                            picture = (String) userMetadata.get("picture");
+                        } else if (userMetadata.containsKey("avatar_url")) {
+                            picture = (String) userMetadata.get("avatar_url");
+                        }
+                    }
                     User newUser = User.builder()
                             .uid(uid)
                             .email(email)
