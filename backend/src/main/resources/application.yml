@@ -1,26 +1,13 @@
 spring:
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          # Supabase JWT 발급자 URI 설정
-          issuer-uri: https://mtlibbxngzujgdzlhonx.supabase.co/auth/v1
+  profiles:
+    active: dev
   # 데이터베이스 연결 정보
   datasource:
-    url: jdbc:postgresql://localhost:5432/post_db
-    username: root
-    password: pass1234
-    driver-class-name: org.postgresql.Driver
+    url: ${DB_URL:jdbc:h2:mem:testdb}
+    username: ${DB_USERNAME:sa}
+    password: ${DB_PASSWORD:}
   # JPA(Hibernate) 설정
   jpa:
     hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        format_sql: true
-    show-sql: true
-# CORS 전역 설정
-cors:
-  allowed-origins: "http://localhost:3000" # 프론트엔드의 요청을 허용할 출처
-  allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
-  allowed-headers: "Authorization,Content-Type"
+      ddl-auto: ${DDL_AUTO:validate}
+    show-sql: ${SHOW_SQL:false}

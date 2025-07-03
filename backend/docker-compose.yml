@@ -3,12 +3,12 @@ version: '3.8'
 services:
   postgres:
     image: postgres:15
-    container_name: ddoddo-market-db
+    container_name: ddoddo-market-db-container
     restart: unless-stopped
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: pass1234
-      POSTGRES_DB: post_db
+      POSTGRES_DB: ddoddo_market_db
     ports:
       - "5432:5432"
     volumes:

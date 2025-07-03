@@ -5,6 +5,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
+import org.springframework.security.oauth2.core.OAuth2TokenValidator;
+import org.springframework.security.oauth2.core.OAuth2TokenValidatorResult;
+import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -33,14 +37,16 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // 4. API 엔드포인트 별 접근 권한 설정
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/v1/**").authenticated() // "/api/v1/" 로 시작하는 모든 요청은 인증 필요
-                        .anyRequest().permitAll() // 그 외 모든 요청은 허용
+                        // 인증 없이 접근 가능한 엔드포인트들
+                        .requestMatchers("/api/v1/auth/login").permitAll()
+                        .requestMatchers("/api/v1/auth/token-debug").permitAll()
+                        .anyRequest().authenticated()
                 )
-                // 5. OAuth2 리소스 서버 설정을 JWT 방식으로 활성화
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()));
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt());
 
         return http.build();
     }
+
 
     // CORS 설정을 위한 Bean
     @Bean
