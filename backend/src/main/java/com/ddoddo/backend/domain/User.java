@@ -40,4 +40,15 @@ public class User {
         this.profileImageUrl = profileImageUrl;
         this.createdAt = LocalDateTime.now();
     }
+
+    /**
+     * 사용자 프로필 정보(이메일, 이미지 URL)를 업데이트하는 메서드
+     * @param email 새로운 이메일 주소
+     * @param profileImageUrl 새로운 프로필 이미지 URL
+     */
+    public void updateProfile(String email, String profileImageUrl) {
+        this.email = email;
+        this.profileImageUrl = profileImageUrl;
+        this.updatedAt = LocalDateTime.now();
+    }
 }
