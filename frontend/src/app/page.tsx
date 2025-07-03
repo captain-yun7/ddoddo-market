@@ -20,7 +20,14 @@ export default async function Home() {
               로그인되었습니다:{" "}
               <span className="font-semibold">{user.email}</span>
             </p>
-            <LogoutButton />
+            <div className="flex justify-center gap-4 mt-4">
+              <Link href="/mypage">
+                <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                  마이페이지로 이동
+                </button>
+              </Link>
+              <LogoutButton />
+            </div>
           </div>
         ) : (
           <div className="space-y-4">
