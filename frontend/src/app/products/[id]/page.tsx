@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import api from "@/lib/api";
-import { Product } from "@/types";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import { useProduct } from "@/hooks/useProducts"; // 커스텀 훅 사용
