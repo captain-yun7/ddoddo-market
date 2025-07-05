@@ -1,6 +1,7 @@
 package com.ddoddo.backend.service;
 
 import com.ddoddo.backend.domain.Product;
+import com.ddoddo.backend.domain.ProductImage;
 import com.ddoddo.backend.domain.User;
 import com.ddoddo.backend.dto.product.ProductCreateRequest;
 import com.ddoddo.backend.dto.product.ProductResponse;
@@ -12,7 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,12 +26,13 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final S3UploadService s3UploadService; // S3 서비스 주입
 
     /**
-     * 상품 등록
+     * 상품 등록 (이미지 포함)
      */
     @Transactional
-    public ProductResponse createProduct(ProductCreateRequest request, String uid) {
+    public ProductResponse createProduct(ProductCreateRequest request, List<MultipartFile> images, String uid) throws IOException {
         User user = userRepository.findByUid(uid)
                 .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
 
@@ -39,9 +43,34 @@ public class ProductService {
                 .user(user)
                 .build();
 
+        if (images != null && !images.isEmpty()) {
+            for (MultipartFile file : images) {
+                String imageUrl = s3UploadService.upload(file, "product-images");
+                product.addImage(ProductImage.builder().imageUrl(imageUrl).product(product).build());
+            }
+        }
+
         Product savedProduct = productRepository.save(product);
         return ProductResponse.from(savedProduct);
     }
+//    /**
+//     * 상품 등록
+//     */
+//    @Transactional
+//    public ProductResponse createProduct(ProductCreateRequest request, String uid) {
+//        User user = userRepository.findByUid(uid)
+//                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+//
+//        Product product = Product.builder()
+//                .title(request.getTitle())
+//                .content(request.getContent())
+//                .price(request.getPrice())
+//                .user(user)
+//                .build();
+//
+//        Product savedProduct = productRepository.save(product);
+//        return ProductResponse.from(savedProduct);
+//    }
 
     /**
      * 상품 상세 조회
