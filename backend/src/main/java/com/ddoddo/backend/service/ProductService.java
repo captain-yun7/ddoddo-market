@@ -151,14 +151,21 @@ public class ProductService {
      */
     @Transactional
     public void deleteProduct(Long productId, String uid) {
-        Product product = productRepository.findById(productId)
+        // 1. 삭제할 Product를 이미지와 함께 조회 (JOIN FETCH 사용 추천)
+        Product product = productRepository.findByIdWithImages(productId)
                 .orElseThrow(() -> new EntityNotFoundException("상품을 찾을 수 없습니다."));
 
-        // 권한 검사
+        // 2. 권한 검사
         if (!product.isOwner(uid)) {
             throw new AccessDeniedException("상품을 삭제할 권한이 없습니다.");
         }
 
+        // 3. Cloudflare R2에서 모든 이미지 파일 삭제
+        for (ProductImage image : product.getImages()) {
+            s3UploadService.deleteImage(image.getImageUrl());
+        }
+
+        // 4. DB에서 Product 삭제 (ProductImage는 cascade 옵션으로 함께 삭제됨)
         productRepository.delete(product);
     }
 } 

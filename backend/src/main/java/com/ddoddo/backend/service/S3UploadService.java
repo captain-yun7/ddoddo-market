@@ -14,6 +14,7 @@ import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URL;
 import java.util.UUID;
 
 @Slf4j
@@ -51,9 +52,12 @@ public class S3UploadService {
 
     public void deleteImage(String fileUrl) {
         try {
-            // 전체 URL에서 객체 키(파일 경로)를 추출
-            URI uri = new URI(fileUrl);
-            String key = uri.getPath().substring(1); // 맨 앞의 '/' 제거
+            // 1. 전체 URL에서 경로(/<버킷이름>/<파일경로>)를 추출합니다.
+            String path = new URL(fileUrl).getPath();
+
+            // 2. 경로의 맨 앞 '/'와 버킷 이름을 제거하여 순수한 파일 키만 남깁니다.
+            // 예: "/ddoddo-market-images/product-images/abc.png" -> "product-images/abc.png"
+            String key = path.substring(bucket.length() + 2); // 슬래시 2개(/, /)만큼 추가로 잘라냅니다.
 
             DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
                     .bucket(bucket)
@@ -63,7 +67,7 @@ public class S3UploadService {
             s3Client.deleteObject(deleteObjectRequest);
             log.info("R2에서 파일 삭제 성공: {}", key);
         } catch (Exception e) {
-            log.error("R2 파일 삭제 실패: {}", fileUrl, e);
+            log.error("R2 파일 삭제 실패. URL: {}, 에러: {}", fileUrl, e.getMessage());
         }
     }
 }
