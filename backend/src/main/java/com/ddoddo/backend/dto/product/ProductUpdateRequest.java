@@ -4,6 +4,8 @@ import com.ddoddo.backend.domain.ProductStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @NoArgsConstructor
 public class ProductUpdateRequest {
@@ -11,4 +13,5 @@ public class ProductUpdateRequest {
     private String content;
     private Integer price;
     private ProductStatus status;
+    private List<Long> deleteImageIds;
 } 

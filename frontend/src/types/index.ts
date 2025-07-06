@@ -4,6 +4,13 @@ export interface User {
   profileImageUrl: string;
 }
 
+// 상품 이미지 타입을 정의합니다.
+export interface ProductImage {
+  id: number;
+  imageUrl: string;
+  displayOrder: number;
+}
+
 export interface Product {
   id: number;
   title: string;
@@ -14,8 +21,11 @@ export interface Product {
   updatedAt?: string;
   user: User;
 
-  // user 객체 대신 사용자 정보를 직접 포함하도록 수정
+  // 사용자 정보 직접 포함
   userUid: string;
   userNickname: string;
   userProfileImageUrl: string;
+
+  // 상품 이미지 목록을 추가합니다.
+  images: ProductImage[];
 }

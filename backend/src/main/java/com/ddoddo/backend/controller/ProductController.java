@@ -73,11 +73,11 @@ public class ProductController {
             @PathVariable Long productId,
             @RequestPart("request") ProductUpdateRequest request,
             @RequestPart(value = "newImages", required = false) List<MultipartFile> newImages,
-            @RequestPart(value = "deleteImageIds", required = false) List<Long> deleteImageIds,
             @AuthenticationPrincipal Jwt jwt) throws IOException {
 
         String uid = jwt.getSubject();
-        ProductResponse response = productService.updateProduct(productId, request, newImages, deleteImageIds, uid);
+
+        ProductResponse response = productService.updateProduct(productId, request, newImages, uid);
         return ResponseEntity.ok(response);
     }
 

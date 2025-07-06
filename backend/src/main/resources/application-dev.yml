@@ -24,6 +24,8 @@ cloud:
     s3:
       bucket: ${CLOUDFLARE_R2_BUCKET_NAME} # 예: ddoddo-market-images
       endpoint: https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com # S3 호환 엔드포인트
+      # R2 버킷의 공개 URL
+      public-url: ${CLOUDFLARE_R2_PUBLIC_URL} # 예: https://pub-xxxxxxxx.r2.dev
     region:
       static: auto # R2는 'auto' 리전을 사용합니다.
     stack:
@@ -41,3 +43,7 @@ logging:
     org.springframework.security: DEBUG
     org.springframework.security.oauth2: DEBUG
     com.ddoddo.backend: DEBUG
+    # AWS SDK v2의 요청/응답 상세 로깅 활성화
+    software.amazon.awssdk.request: DEBUG
+    # AWS SDK가 내부적으로 사용하는 Apache HttpClient의 모든 통신 내용(wire) 로깅 활성화
+    org.apache.http.wire: DEBUG

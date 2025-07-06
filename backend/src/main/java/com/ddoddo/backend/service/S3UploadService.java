@@ -38,6 +38,8 @@ public class S3UploadService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
+    @Value("${cloud.aws.s3.public-url}")
+    private String publicUrl;
 
     public String upload(MultipartFile multipartFile, String dirName) throws IOException {
         // 파일 확장자 및 크기 검증
@@ -56,13 +58,7 @@ public class S3UploadService {
         // RequestBody (v2)
         s3Client.putObject(putObjectRequest, RequestBody.fromBytes(multipartFile.getBytes()));
 
-        // GetUrlRequest (v2)
-        GetUrlRequest getUrlRequest = GetUrlRequest.builder()
-                .bucket(bucket)
-                .key(s3FileName)
-                .build();
-
-        return s3Client.utilities().getUrl(getUrlRequest).toString();
+        return publicUrl + "/" + s3FileName;
     }
 
     private void validateFile(MultipartFile file) {
@@ -86,10 +82,9 @@ public class S3UploadService {
             // 1. 전체 URL에서 경로(/<버킷이름>/<파일경로>)를 추출합니다.
             String path = new URL(fileUrl).getPath();
 
-            // 2. 경로의 맨 앞 '/'와 버킷 이름을 제거하여 순수한 파일 키만 남깁니다.
-            // 예: "/ddoddo-market-images/product-images/abc.png" -> "product-images/abc.png"
-            String key = path.substring(bucket.length() + 2); // 슬래시 2개(/, /)만큼 추가로 잘라냅니다.
-
+            // 2. URL에서 파일 키(key)를 추출합니다.
+            // 예: https://pub-xxx.r2.dev/product-images/abc.png -> product-images/abc.png
+            String key = fileUrl.substring(publicUrl.length() + 1);
             DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
                     .bucket(bucket)
                     .key(key)

@@ -101,8 +101,7 @@ public class ProductService {
      */
     @Transactional
     public ProductResponse updateProduct(Long productId, ProductUpdateRequest request,
-                                         List<MultipartFile> newImages, List<Long> deleteImageIds, String uid) throws IOException {
-
+                                         List<MultipartFile> newImages, String uid) throws IOException {
         Product product = productRepository.findByIdWithImages(productId)
                 .orElseThrow(() -> new EntityNotFoundException("상품을 찾을 수 없습니다."));
 
@@ -114,7 +113,10 @@ public class ProductService {
         // 1. 텍스트 정보 업데이트
         product.update(request.getTitle(), request.getContent(), request.getPrice(), request.getStatus());
 
+
         // 2. 기존 이미지 삭제
+        List<Long> deleteImageIds = request.getDeleteImageIds();
+
         if (deleteImageIds != null && !deleteImageIds.isEmpty()) {
             List<ProductImage> imagesToDelete = product.getImages().stream()
                     .filter(img -> deleteImageIds.contains(img.getId()))
