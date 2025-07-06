@@ -17,13 +17,17 @@ public class ProductImage {
     @Column(nullable = false)
     private String imageUrl;
 
+    @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
+    private int displayOrder; // 순서 저장 필드
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
 
     @Builder
-    public ProductImage(String imageUrl, Product product) {
+    public ProductImage(String imageUrl, Product product, int displayOrder) {
         this.imageUrl = imageUrl;
         this.product = product;
+        this.displayOrder = displayOrder;
     }
 }

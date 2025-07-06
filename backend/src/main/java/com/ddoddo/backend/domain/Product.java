@@ -42,6 +42,7 @@ public class Product {
     private User user;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("displayOrder ASC")
     private List<ProductImage> images = new ArrayList<>();
 
     @Builder

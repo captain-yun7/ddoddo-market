@@ -44,9 +44,15 @@ public class ProductService {
                 .build();
 
         if (images != null && !images.isEmpty()) {
-            for (MultipartFile file : images) {
+            for (int i = 0; i < images.size(); i++) {
+                MultipartFile file = images.get(i);
                 String imageUrl = s3UploadService.upload(file, "product-images");
-                product.addImage(ProductImage.builder().imageUrl(imageUrl).product(product).build());
+                // 빌더에 displayOrder 추가
+                product.addImage(ProductImage.builder()
+                        .imageUrl(imageUrl)
+                        .product(product)
+                        .displayOrder(i) // 리스트의 인덱스를 순서로 저장
+                        .build());
             }
         }
 
