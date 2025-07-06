@@ -7,11 +7,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetUrlRequest;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.UUID;
 
 @Slf4j
@@ -45,5 +47,23 @@ public class S3UploadService {
                 .build();
 
         return s3Client.utilities().getUrl(getUrlRequest).toString();
+    }
+
+    public void deleteImage(String fileUrl) {
+        try {
+            // 전체 URL에서 객체 키(파일 경로)를 추출
+            URI uri = new URI(fileUrl);
+            String key = uri.getPath().substring(1); // 맨 앞의 '/' 제거
+
+            DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(key)
+                    .build();
+
+            s3Client.deleteObject(deleteObjectRequest);
+            log.info("R2에서 파일 삭제 성공: {}", key);
+        } catch (Exception e) {
+            log.error("R2 파일 삭제 실패: {}", fileUrl, e);
+        }
     }
 }

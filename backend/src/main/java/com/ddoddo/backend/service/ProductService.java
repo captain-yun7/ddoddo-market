@@ -100,8 +100,10 @@ public class ProductService {
      * 상품 수정
      */
     @Transactional
-    public ProductResponse updateProduct(Long productId, ProductUpdateRequest request, String uid) {
-        Product product = productRepository.findById(productId)
+    public ProductResponse updateProduct(Long productId, ProductUpdateRequest request,
+                                         List<MultipartFile> newImages, List<Long> deleteImageIds, String uid) throws IOException {
+
+        Product product = productRepository.findByIdWithImages(productId)
                 .orElseThrow(() -> new EntityNotFoundException("상품을 찾을 수 없습니다."));
 
         // 권한 검사
@@ -109,13 +111,38 @@ public class ProductService {
             throw new AccessDeniedException("상품을 수정할 권한이 없습니다.");
         }
 
-        product.update(
-                request.getTitle(),
-                request.getContent(),
-                request.getPrice(),
-                request.getStatus()
-        );
+        // 1. 텍스트 정보 업데이트
+        product.update(request.getTitle(), request.getContent(), request.getPrice(), request.getStatus());
 
+        // 2. 기존 이미지 삭제
+        if (deleteImageIds != null && !deleteImageIds.isEmpty()) {
+            List<ProductImage> imagesToDelete = product.getImages().stream()
+                    .filter(img -> deleteImageIds.contains(img.getId()))
+                    .toList();
+
+            for (ProductImage img : imagesToDelete) {
+                s3UploadService.deleteImage(img.getImageUrl()); // R2에서 파일 삭제
+                product.getImages().remove(img); // product 컬렉션 및 DB에서 삭제
+            }
+        }
+
+        // 3. 새 이미지 추가
+        if (newImages != null && !newImages.isEmpty()) {
+            int currentMaxOrder = product.getImages().stream()
+                    .mapToInt(ProductImage::getDisplayOrder)
+                    .max().orElse(-1);
+
+            for (int i = 0; i < newImages.size(); i++) {
+                String imageUrl = s3UploadService.upload(newImages.get(i), "product-images");
+                product.addImage(ProductImage.builder()
+                        .imageUrl(imageUrl)
+                        .product(product)
+                        .displayOrder(currentMaxOrder + 1 + i)
+                        .build());
+            }
+        }
+
+        // 변경된 내용은 @Transactional에 의해 자동 저장 (Dirty Checking)
         return ProductResponse.from(product);
     }
 

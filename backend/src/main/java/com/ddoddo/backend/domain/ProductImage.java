@@ -17,7 +17,7 @@ public class ProductImage {
     @Column(nullable = false)
     private String imageUrl;
 
-    @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
+    @Column(nullable = false)
     private int displayOrder; // 순서 저장 필드
 
     @ManyToOne(fetch = FetchType.LAZY)
