@@ -1,6 +1,7 @@
 package com.ddoddo.backend.controller;
 
 import com.ddoddo.backend.dto.chat.ChatMessageRequest;
+import com.ddoddo.backend.dto.chat.ChatMessageResponse;
 import com.ddoddo.backend.dto.chat.ChatRoomResponse;
 import com.ddoddo.backend.service.ChatService;
 import lombok.RequiredArgsConstructor;
@@ -54,7 +55,10 @@ public class ChatController {
         return ResponseEntity.ok(myChatRooms);
     }
 
-    // 이전 메시지 조회 (구현 시 추가)
-    // @GetMapping("/rooms/{roomId}/messages")
-    // public ResponseEntity<Page<ChatMessageResponse>> getMessages(...) { ... }
+    @GetMapping("/api/v1/chat/rooms/{roomId}/messages")
+    public ResponseEntity<List<ChatMessageResponse>> getChatMessages(@PathVariable Long roomId) {
+        // ChatService를 통해 특정 채팅방의 모든 메시지를 조회합니다.
+        List<ChatMessageResponse> messages = chatService.getMessagesByRoomId(roomId);
+        return ResponseEntity.ok(messages);
+    }
 }

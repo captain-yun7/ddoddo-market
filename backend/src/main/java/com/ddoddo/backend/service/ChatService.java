@@ -87,6 +87,14 @@ public class ChatService {
         messagingTemplate.convertAndSend("/topic/chat/room/" + roomId, messageResponse);
     }
 
-    // 이전 메시지 조회 로직 (ChatMessage 관련 DTO 및 Repository 필요)
-    // public Page<ChatMessageResponse> findChatMessages(Long roomId, Pageable pageable) { ... }
+    @Transactional(readOnly = true)
+    public List<ChatMessageResponse> getMessagesByRoomId(Long roomId) {
+        // ChatMessageRepository를 사용하여 특정 채팅방의 모든 메시지를 생성 시간 순으로 조회합니다.
+        List<ChatMessage> messages = chatMessageRepository.findByChatRoomIdOrderByCreatedAtAsc(roomId);
+
+        // 조회된 메시지 엔티티 목록을 ChatMessageResponse DTO 목록으로 변환하여 반환합니다.
+        return messages.stream()
+                .map(ChatMessageResponse::from)
+                .collect(Collectors.toList());
+    }
 }
