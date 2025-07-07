@@ -10,14 +10,16 @@ import java.time.LocalDateTime;
 public class ChatMessageResponse {
     private Long messageId;
     private Long senderId;
+    private String senderUid;
     private String senderNickname;
     private String message;
     private LocalDateTime createdAt;
 
     @Builder
-    public ChatMessageResponse(Long messageId, Long senderId, String senderNickname, String message, LocalDateTime createdAt) {
+    public ChatMessageResponse(Long messageId, Long senderId, String senderUid, String senderNickname, String message, LocalDateTime createdAt) {
         this.messageId = messageId;
         this.senderId = senderId;
+        this.senderUid = senderUid;
         this.senderNickname = senderNickname;
         this.message = message;
         this.createdAt = createdAt;
@@ -27,6 +29,7 @@ public class ChatMessageResponse {
         return ChatMessageResponse.builder()
                 .messageId(chatMessage.getId())
                 .senderId(chatMessage.getSender().getId())
+                .senderUid(chatMessage.getSender().getUid())
                 .senderNickname(chatMessage.getSender().getNickname())
                 .message(chatMessage.getMessage())
                 .createdAt(chatMessage.getCreatedAt())

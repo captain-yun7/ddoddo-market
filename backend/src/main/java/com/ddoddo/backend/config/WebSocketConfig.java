@@ -31,8 +31,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         // 클라이언트에서 웹소켓에 연결할 때 사용할 엔드포인트를 등록
         // SockJS는 웹소켓을 지원하지 않는 브라우저를 위한 대체 옵션
         registry.addEndpoint("/ws-stomp")
-                .setAllowedOriginPatterns("*") // TODO: 프로덕션 환경에서는 특정 도메인만 허용하도록 변경해야 합니다.
-                .withSockJS();
+                .setAllowedOrigins("http://localhost:3000")
+//                .setAllowedOriginPatterns("*") // TODO: 프로덕션 환경에서는 특정 도메인만 허용하도록 변경해야 합니다.
+                ;
     }
 
     @Override
