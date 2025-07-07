@@ -10,7 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -20,17 +22,30 @@ public class ProductController {
 
     private final ProductService productService;
 
+
     /**
      * 상품 등록
      */
-    @PostMapping
+    @PostMapping(consumes = {"multipart/form-data"}) // multipart/form-data 형식 명시
     public ResponseEntity<ProductResponse> createProduct(
-            @RequestBody ProductCreateRequest request,
-            @AuthenticationPrincipal Jwt jwt) {
+            @RequestPart("request") ProductCreateRequest request, // @RequestBody -> @RequestPart
+            @RequestPart(value = "images", required = false) List<MultipartFile> images,
+            @AuthenticationPrincipal Jwt jwt) throws IOException {
         String uid = jwt.getSubject();
-        ProductResponse response = productService.createProduct(request, uid);
+        ProductResponse response = productService.createProduct(request, images, uid);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+//    /**
+//     * 상품 등록
+//     */
+//    @PostMapping
+//    public ResponseEntity<ProductResponse> createProduct(
+//            @RequestBody ProductCreateRequest request,
+//            @AuthenticationPrincipal Jwt jwt) {
+//        String uid = jwt.getSubject();
+//        ProductResponse response = productService.createProduct(request, uid);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+//    }
 
     /**
      * 상품 상세 조회
@@ -53,13 +68,16 @@ public class ProductController {
     /**
      * 상품 수정
      */
-    @PatchMapping("/{productId}")
+    @PatchMapping(value = "/{productId}", consumes = {"multipart/form-data"})
     public ResponseEntity<ProductResponse> updateProduct(
             @PathVariable Long productId,
-            @RequestBody ProductUpdateRequest request,
-            @AuthenticationPrincipal Jwt jwt) {
+            @RequestPart("request") ProductUpdateRequest request,
+            @RequestPart(value = "newImages", required = false) List<MultipartFile> newImages,
+            @AuthenticationPrincipal Jwt jwt) throws IOException {
+
         String uid = jwt.getSubject();
-        ProductResponse response = productService.updateProduct(productId, request, uid);
+
+        ProductResponse response = productService.updateProduct(productId, request, newImages, uid);
         return ResponseEntity.ok(response);
     }
 

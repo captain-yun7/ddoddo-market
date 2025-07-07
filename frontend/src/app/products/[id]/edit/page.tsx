@@ -39,9 +39,37 @@ export default function EditProductPage() {
     fetchProduct();
   }, [id]);
 
-  const handleSubmit = async (data: ProductUpdateData) => {
+  const handleSubmit = async (
+    data: ProductUpdateData,
+    newImages: File[],
+    deleteImageIds: number[]
+  ) => {
+    const formData = new FormData();
+
+    // 전송할 데이터 객체에 deleteImageIds를 포함시킵니다.
+    const requestData = {
+      ...data,
+      deleteImageIds: deleteImageIds,
+    };
+
+    // 1. JSON 데이터를 Blob으로 만들어 FormData에 추가
+    formData.append(
+      "request",
+      // deleteImageIds가 포함된 객체를 JSON으로 변환합니다.
+      new Blob([JSON.stringify(requestData)], { type: "application/json" })
+    );
+
+    // 2. 새로 추가할 이미지 파일들을 FormData에 추가
+    newImages.forEach((image) => {
+      formData.append("newImages", image);
+    });
+
     try {
-      await api.patch(`/api/v1/products/${id}`, data);
+      await api.patch(`/api/v1/products/${id}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       alert("상품 정보가 성공적으로 수정되었습니다.");
       router.push(`/products/${id}`);
     } catch (error) {
