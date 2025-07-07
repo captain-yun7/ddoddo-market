@@ -1,4 +1,4 @@
-package com.ddoddo.backend.dto;
+package com.ddoddo.backend.dto.chat;
 
 import com.ddoddo.backend.domain.ChatRoom;
 import com.ddoddo.backend.domain.User;

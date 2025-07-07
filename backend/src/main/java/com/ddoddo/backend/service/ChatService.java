@@ -1,14 +1,18 @@
 package com.ddoddo.backend.service;
 
+import com.ddoddo.backend.domain.ChatMessage;
 import com.ddoddo.backend.domain.ChatRoom;
 import com.ddoddo.backend.domain.Product;
 import com.ddoddo.backend.domain.User;
-import com.ddoddo.backend.dto.ChatRoomResponse;
+import com.ddoddo.backend.dto.chat.ChatMessageResponse;
+import com.ddoddo.backend.dto.chat.ChatRoomResponse;
+import com.ddoddo.backend.repository.ChatMessageRepository;
 import com.ddoddo.backend.repository.ChatRoomRepository;
 import com.ddoddo.backend.repository.ProductRepository;
 import com.ddoddo.backend.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,9 +24,11 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class ChatService {
 
-    private final ChatRoomRepository chatRoomRepository;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
+    private final ChatRoomRepository chatRoomRepository;
+    private final ChatMessageRepository chatMessageRepository;
+    private final SimpMessagingTemplate messagingTemplate; // 메시지 전송을 위한 템플릿
 
     @Transactional
     public Long findOrCreateRoom(Long productId, String buyerUid) {
@@ -57,6 +63,28 @@ public class ChatService {
         return chatRooms.stream()
                 .map(chatRoom -> ChatRoomResponse.of(chatRoom, user))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void saveAndSendMessage(Long roomId, String senderUid, String messageContent) {
+        User sender = userRepository.findByUid(senderUid)
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다."));
+        ChatRoom chatRoom = chatRoomRepository.findById(roomId)
+                .orElseThrow(() -> new EntityNotFoundException("채팅방을 찾을 수 없습니다."));
+
+        // 1. 메시지를 DB에 저장
+        ChatMessage chatMessage = ChatMessage.builder()
+                .chatRoom(chatRoom)
+                .sender(sender)
+                .message(messageContent)
+                .build();
+        chatMessageRepository.save(chatMessage);
+
+        // 2. DTO로 변환
+        ChatMessageResponse messageResponse = ChatMessageResponse.from(chatMessage);
+
+        // 3. /topic/chat/room/{roomId} 토픽을 구독 중인 클라이언트에게 메시지를 전송
+        messagingTemplate.convertAndSend("/topic/chat/room/" + roomId, messageResponse);
     }
 
     // 이전 메시지 조회 로직 (ChatMessage 관련 DTO 및 Repository 필요)
