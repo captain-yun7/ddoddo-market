@@ -22,12 +22,13 @@ cloud:
       access-key: ${CLOUDFLARE_ACCESS_KEY_ID}
       secret-key: ${CLOUDFLARE_SECRET_ACCESS_KEY}
     s3:
+      enabled: false
       bucket: ${CLOUDFLARE_R2_BUCKET_NAME} # 예: ddoddo-market-images
       endpoint: https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com # S3 호환 엔드포인트
       # R2 버킷의 공개 URL
       public-url: ${CLOUDFLARE_R2_PUBLIC_URL} # 예: https://pub-xxxxxxxx.r2.dev
     region:
-      static: auto # R2는 'auto' 리전을 사용합니다.
+      static: us-east-1 # R2는 'auto' 리전을 사용합니다.
     stack:
       auto: false
 
