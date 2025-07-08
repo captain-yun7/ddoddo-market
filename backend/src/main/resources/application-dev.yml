@@ -48,3 +48,9 @@ logging:
     software.amazon.awssdk.request: DEBUG
     # AWS SDK가 내부적으로 사용하는 Apache HttpClient의 모든 통신 내용(wire) 로깅 활성화
     org.apache.http.wire: DEBUG
+    # 스프링의 STOMP 메시징 관련 로그를 DEBUG 레벨로 설정
+    org.springframework.messaging: DEBUG
+    # 웹소켓 관련 상세 로그를 TRACE 레벨(가장 상세)로 설정
+    org.springframework.web.socket: TRACE
+    # 우리가 만든 StompHandler의 로그를 DEBUG 레벨로 설정
+    com.ddoddo.backend.config: DEBUG
