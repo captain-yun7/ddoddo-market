@@ -25,14 +25,14 @@ export default function Header() {
   return (
     <header className="bg-white shadow-md">
       <nav className="container mx-auto px-4 py-3 flex justify-between items-center">
-        <Link href="/" className="text-xl font-bold text-blue-600">
+        <Link href="/" className="text-xl font-bold text-teal-500">
           또또마켓
         </Link>
         <div className="flex items-center space-x-4">
           <Link
             href="/products"
-            className={`text-gray-600 hover:text-blue-500 ${
-              pathname === "/products" ? "font-bold text-blue-500" : ""
+            className={`text-gray-600 hover:text-teal-500 ${
+              pathname === "/products" ? "font-bold text-teal-500" : ""
             }`}
           >
             상품 목록
@@ -41,16 +41,16 @@ export default function Header() {
             <>
               <Link
                 href="/chat"
-                className={`text-gray-600 hover:text-blue-500 ${
-                  pathname.startsWith("/chat") ? "font-bold text-blue-500" : ""
+                className={`text-gray-600 hover:text-teal-500 ${
+                  pathname.startsWith("/chat") ? "font-bold text-teal-500" : ""
                 }`}
               >
                 채팅
               </Link>
               <Link
                 href="/mypage"
-                className={`text-gray-600 hover:text-blue-500 ${
-                  pathname === "/mypage" ? "font-bold text-blue-500" : ""
+                className={`text-gray-600 hover:text-teal-500 ${
+                  pathname === "/mypage" ? "font-bold text-teal-500" : ""
                 }`}
               >
                 마이페이지
@@ -60,7 +60,7 @@ export default function Header() {
           )}
           {!user && pathname !== "/login" && (
             <Link href="/login">
-              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+              <button className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded">
                 로그인
               </button>
             </Link>
